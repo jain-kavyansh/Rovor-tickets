@@ -3,6 +3,14 @@
 A small project/ticket management app built for the RovorAI.com Full Stack Developer assignment.
 Next.js (App Router) + TypeScript, PostgreSQL via Drizzle ORM, TanStack Query on the client.
 
+## Live Demo
+
+https://rovor-tickets.vercel.app
+
+## GitHub Repository
+
+https://github.com/jain-kavyansh/Rovor-tickets
+
 ## Features
 - Dashboard of project cards: name, description, ticket counts (Todo / In Progress / Done), 3 most recently updated tickets, **Open project**, **+** (create ticket), **Create project**.
 - Project page: summary + counts, ticket list, **backend-powered** search, status and priority filters (all combinable), create/open/edit tickets, GitHub **Repository insights**.
@@ -72,9 +80,14 @@ Other scripts: `npm run typecheck`, `npm run lint`, `npm test`, `npm run build`.
 | `GITHUB_TOKEN` | no | Server-side only. Raises GitHub limit from 60/h to 5000/h. Without it the app works but rate limits quickly on shared IPs |
 
 ## Deployment (Vercel)
+
+Live Demo: https://rovor-tickets.vercel.app
+
 1. Create a Postgres database (e.g. Neon/Supabase) and add `DATABASE_URL` (+ optional `GITHUB_TOKEN`) in Vercel project settings.
-2. Import the repo. `vercel-build` runs `drizzle-kit migrate && next build`.
-3. Run the seed once from your machine against that database: `DATABASE_URL=... npm run db:seed`.
+2. Import the GitHub repository into Vercel. `vercel-build` runs `drizzle-kit migrate && next build`.
+
+3. Run the seed once from your machine against the production database:
+   `DATABASE_URL=... npm run db:seed`.
 
 ## Trade-offs & assumptions
 - Drizzle + `pg` instead of Prisma (see AI section). Route handlers instead of a separate backend: one deployable, clear layering.
@@ -84,7 +97,6 @@ Other scripts: `npm run typecheck`, `npm run lint`, `npm test`, `npm run build`.
 - No pagination, delete, or auth (out of scope), so no destructive confirmations exist.
 
 ## Known limitations
-- **Not deployed**: I had no Vercel access in my build environment, so there is no live link yet.
 - **A live successful GitHub fetch was not verified** in the build environment (its shared IP had exhausted GitHub's unauthenticated limit; I did observe the real 403 rate-limit response handled correctly). The success path, cache hit/expiry, stale fallback and every error mapping are covered by unit tests with a mocked `fetch`, and the DB cache read/stale path was checked against real Postgres.
 - **UI was not tested in a real browser** (none available): behavior is covered by jsdom component/page tests; responsive layout (Tailwind, `break-words`, `line-clamp`, no fixed widths) has not been visually checked on a phone.
 - No cache stampede protection: concurrent requests after expiry may each call GitHub once.
